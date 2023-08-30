@@ -22,7 +22,7 @@ class User {
         400
       );
     }
-
+//hash the password 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(

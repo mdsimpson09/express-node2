@@ -17,6 +17,14 @@ const createTokenForUser = require('../helpers/createToken');
 router.post('/register', async function(req, res, next) {
   try {
     const { username, password, first_name, last_name, email, phone } = req.body;
+
+    // Check if username is already taken
+    const existingUser = await User.get(username);
+      if (existingUser) {
+        throw new ExpressError(`There already exists a user with username '${username}'`, 400);
+        }
+
+  // If not taken, register the user
     let user = await User.register({username, password, first_name, last_name, email, phone});
     const token = createTokenForUser(username, user.admin);
     return res.status(201).json({ token });
@@ -35,15 +43,43 @@ router.post('/register', async function(req, res, next) {
  *
  */
 
+// router.post('/login', async function(req, res, next) {
+//   try {
+//     const { username, password } = req.body;
+//     let user = User.authenticate(username, password);
+
+//   // Perform a bcrypt comparison even if the user doesn't exist
+//     await bcrypt.compare("dummy", user.password);
+
+//     const token = createTokenForUser(username, user.admin);
+//     return res.json({ token });
+//   } catch (err) {
+//     return next(err);
+//   }
+// }); // end
+
 router.post('/login', async function(req, res, next) {
   try {
     const { username, password } = req.body;
-    let user = User.authenticate(username, password);
-    const token = createTokenForUser(username, user.admin);
-    return res.json({ token });
+
+    // Retrieve user data by username
+    const user = await User.authenticate(username, password);
+
+    // Use bcrypt's constant-time comparison for password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (isValidPassword) {
+      // Password is valid, generate and return a token
+      const token = createTokenForUser(username, user.admin);
+      return res.json({ token });
+    } else {
+      // Password is invalid, return a 401 Unauthorized response
+      throw new ExpressError('Cannot authenticate', 401);
+    }
   } catch (err) {
     return next(err);
   }
-}); // end
+});
+
 
 module.exports = router;

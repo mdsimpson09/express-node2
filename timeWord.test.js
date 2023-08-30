@@ -1,53 +1,47 @@
 const timeWord = require('./timeWord');
 
-describe('#timeword', () => {
+describe('timeWord', () => {
   test('it is a function', () => {
     expect(typeof timeWord).toBe('function');
   });
 
-  test('converts 00:00 to midnight', () => {
-    expect(timeWord('00:00')).toBe('midnight');
+  test('handles 01:15 as one fifteen am', () => {
+    expect(timeWord('01:15')).toBe('one fifteen am');
   });
 
-  test('converts 00:12 to twelve twelve am', () => {
-    expect(timeWord('00:12')).toBe('twelve twelve am');
+  test('handles 01:30 as one thirty am', () => {  
+    expect(timeWord('01:30')).toBe('one thirty am');
   });
 
-  test('converts 01:00 to one o’clock am', () => {
-    expect(timeWord('01:00')).toBe('one o’clock am');
+  test('handles 01:45 as one forty five am', () => {
+    expect(timeWord('01:45')).toBe('one forty five am');
   });
 
-  test('converts 06:01 to six oh one am', () => {
-    expect(timeWord('06:01')).toBe('six oh one am');
+  test('handles 11:59 as eleven fifty nine am', () => {
+    expect(timeWord('11:59')).toBe('eleven fifty nine am');  
   });
 
-  test('converts 06:10 to six ten am', () => {
-    expect(timeWord('06:10')).toBe('six ten am');
+  test('handles 12:15 as twelve fifteen pm', () => {
+    expect(timeWord('12:15')).toBe('twelve fifteen pm');
   });
 
-  test('converts 06:18 to six eighteen am', () => {
-    expect(timeWord('06:18')).toBe('six eighteen am');
+  test('handles 12:30 as twelve thirty pm', () => {
+    expect(timeWord('12:30')).toBe('twelve thirty pm');
   });
 
-  test('converts 06:30 to six thirty am', () => {
-    expect(timeWord('06:30')).toBe('six thirty am');
+  test('handles 12:45 as twelve forty five pm', () => {
+    expect(timeWord('12:45')).toBe('twelve forty five pm');
   });
 
-  test('converts 10:34 to ten thirty four am', () => {
-    expect(timeWord('10:34')).toBe('ten thirty four am');
+  test('handles 23:15 as eleven fifteen pm', () => {
+    expect(timeWord('23:15')).toBe('eleven fifteen pm');
   });
 
-  test('converts 12:00 to noon', () => {
-    expect(timeWord('12:00')).toBe('noon');
+  test('handles 23:30 as eleven thirty pm', () => {
+    expect(timeWord('23:30')).toBe('eleven thirty pm');
   });
 
-  test('converts 12:09 to twelve oh nine pm', () => {
-    expect(timeWord('12:09')).toBe('twelve oh nine pm');
+  test('handles 23:45 as eleven forty five pm', () => {
+    expect(timeWord('23:45')).toBe('eleven forty five pm');
   });
-
-  test('converts 23:23 to eleven twenty three pm', () => {
-    expect(timeWord('23:23')).toBe('eleven twenty three pm');
-  });
-
-  // come back and Add more test cases here
 });

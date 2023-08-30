@@ -20,13 +20,74 @@
 
 // Also, do this without the aid of any external packages. The goal here is to have you think about how you’d solve the problem, not have you show us how good you are at finding third-party libraries.
 
+function timeWord(time) {
+
+  const hours = [
+    'midnight', 'one', 'two', 'three', 'four', 'five', 
+    'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'
+  ];
+
+  const minutes = [
+    'o’clock', 'oh one', 'oh two', 'oh three', 'oh four', 'oh five',
+    'oh six', 'oh seven', 'oh eight', 'oh nine', 'ten', 'eleven', 'twelve',
+    'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 
+    'twenty', 'twenty one', 'twenty two', 'twenty three', 'twenty four', 'twenty five', 
+    'twenty six', 'twenty seven', 'twenty eight', 'twenty nine' 
+  ];
+
+  const [hourStr, minuteStr] = time.split(":");
+  const hour = parseInt(hourStr);
+  const minute = parseInt(minuteStr);
+
+  let output = "";
+
+  if (minute === 0) {
+    if (hour === 0) {
+      output = hours[0]; 
+    } else if (hour === 12) {
+      output = hours[hour] + " " + minutes[0];
+    } else {
+      output = hours[hour] + " " + minutes[0] + " " + (hour < 12 ? "am" : "pm");
+    }
+  } else if (minute <= 30) {
+    if (minute === 15) {
+      output = hours[hour] + " " + "quarter";
+    } else if (minute === 30) {
+      output = hours[hour] + " " + "half";
+    } else {
+      output = hours[hour] + " " + minutes[minute];
+      if (minute <= 9) {
+        output += " " + minutes[minute];  
+      } else {
+        output += " " + minutes[minute] + "s";
+      }
+    }
+    output += " " + (hour < 12 ? "am" : "pm");
+  } else {
+    const remainingMinutes = 60 - minute;
+    if (remainingMinutes === 15) {
+      output = hours[hour + 1] + " " + "quarter";
+    } else {
+      output = hours[hour + 1] + " " + minutes[remainingMinutes] + "s"; 
+    }
+    output += " " + (hour < 11 ? "am" : "pm");
+  }
+
+  return output;
+
+}
+
+module.exports = timeWord;
+
 // function timeWord(time) {
-//     const hours = [
+//     const [hours, minutes] = time.split(':').map(Number);
+    
+//     const numToWord = [
 //       'midnight', 'one', 'two', 'three', 'four', 'five',
 //       'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'
 //     ];
   
-//     const minutes = [
+//     const minuteToWord = [
 //       'o’clock', 'oh one', 'oh two', 'oh three', 'oh four', 'oh five',
 //       'oh six', 'oh seven', 'oh eight', 'oh nine', 'ten', 'eleven', 'twelve',
 //       'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen',
@@ -34,79 +95,20 @@
 //       'twenty six', 'twenty seven', 'twenty eight', 'twenty nine'
 //     ];
   
-//     const [hourStr, minuteStr] = time.split(":");
-//     const hour = parseInt(hourStr);
-//     const minute = parseInt(minuteStr);
-  
 //     let output = "";
   
-//     if (minute === 0) {
-//       if (hour === 0) {
-//         output = hours[0];
-//       } else if (hour === 12) {
-//         output = hours[hour] + " " + minutes[0];
-//       } else {
-//         output = hours[hour] + " " + minutes[0] + " " + (hour < 12 ? "am" : "pm");
-//       }
-//     } else if (minute <= 30) {
-//       if (minute === 15) {
-//         output = hours[hour] + " " + "quarter";
-//       } else if (minute === 30) {
-//         output = hours[hour] + " " + "half";
-//       } else {
-//         output = hours[hour] + " " + minutes[minute];
-//         if (minute <= 9) {
-//           output += " " + minutes[minute];
-//         } else {
-//           output += " " + minutes[minute] + "s";
-//         }
-//       }
-//       output += " " + (hour < 12 ? "am" : "pm");
+//     if (minutes === 0) {
+//       output = hours === 0 ? numToWord[0] : numToWord[hours] + ' ' + minuteToWord[0];
+//     } else if (minutes <= 30) {
+//       const minuteStr = minutes <= 9 ? minuteToWord[minutes] : minuteToWord[minutes] + 's';
+//       output = `${numToWord[hours]} ${minuteStr} ${hours < 12 ? 'am' : 'pm'}`;
 //     } else {
-//       const remainingMinutes = 60 - minute;
-//       if (remainingMinutes === 15) {
-//         output = hours[hour + 1] + " " + "quarter";
-//       } else {
-//         output = hours[hour + 1] + " " + minutes[remainingMinutes] + "s";
-//       }
-//       output += " " + (hour < 11 ? "am" : "pm");
+//       const remainingMinutes = 60 - minutes;
+//       const minuteStr = remainingMinutes === 15 ? 'quarter' : minuteToWord[remainingMinutes] + 's';
+//       output = `${numToWord[hours + 1]} ${minuteStr} ${hours < 11 ? 'am' : 'pm'}`;
 //     }
   
 //     return output;
 //   }
-  
-//   module.exports = timeWord;
-
-function timeWord(time) {
-    const [hours, minutes] = time.split(':').map(Number);
-    
-    const numToWord = [
-      'midnight', 'one', 'two', 'three', 'four', 'five',
-      'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'
-    ];
-  
-    const minuteToWord = [
-      'o’clock', 'oh one', 'oh two', 'oh three', 'oh four', 'oh five',
-      'oh six', 'oh seven', 'oh eight', 'oh nine', 'ten', 'eleven', 'twelve',
-      'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen',
-      'twenty', 'twenty one', 'twenty two', 'twenty three', 'twenty four', 'twenty five',
-      'twenty six', 'twenty seven', 'twenty eight', 'twenty nine'
-    ];
-  
-    let output = "";
-  
-    if (minutes === 0) {
-      output = hours === 0 ? numToWord[0] : numToWord[hours] + ' ' + minuteToWord[0];
-    } else if (minutes <= 30) {
-      const minuteStr = minutes <= 9 ? minuteToWord[minutes] : minuteToWord[minutes] + 's';
-      output = `${numToWord[hours]} ${minuteStr} ${hours < 12 ? 'am' : 'pm'}`;
-    } else {
-      const remainingMinutes = 60 - minutes;
-      const minuteStr = remainingMinutes === 15 ? 'quarter' : minuteToWord[remainingMinutes] + 's';
-      output = `${numToWord[hours + 1]} ${minuteStr} ${hours < 11 ? 'am' : 'pm'}`;
-    }
-  
-    return output;
-  }
   
   module.exports = timeWord;

@@ -35,18 +35,27 @@ router.get('/', authUser, requireLogin, async function(req, res, next) {
  *
  */
 
-router.get('/:username', authUser, requireLogin, async function(
-  req,
-  res,
-  next
-) {
+router.get("/:username", authUser, requireLogin, async function(req, res, next) {
   try {
+    if (!req.curr_admin && req.curr_username !== req.params.username) {
+      throw new ExpressError("Unauthorized", 401);
+    }
+
     let user = await User.get(req.params.username);
     return res.json({ user });
   } catch (err) {
     return next(err);
   }
 });
+
+// router.get('/:username', authUser, requireLogin, async function(req, res, next) {
+//   try {
+//     let user = await User.get(req.params.username);
+//     return res.json({ user });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 /** PATCH /[username]
  *
@@ -100,11 +109,28 @@ router.delete('/:username', authUser, requireAdmin, async function(
   next
 ) {
   try {
-    User.delete(req.params.username);
+    const deleted = await User.delete(req.params.username);
+    if (!deleted) {
+      throw new ExpressError('No such user', 404);
+    }
     return res.json({ message: 'deleted' });
   } catch (err) {
     return next(err);
   }
-}); // end
+});
+
+
+// router.delete('/:username', authUser, requireAdmin, async function(
+//   req,
+//   res,
+//   next
+// ) {
+//   try {
+//     User.delete(req.params.username);
+//     return res.json({ message: 'deleted' });
+//   } catch (err) {
+//     return next(err);
+//   }
+// }); // end
 
 module.exports = router;

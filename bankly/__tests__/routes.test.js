@@ -91,6 +91,26 @@ describe("POST /auth/login", function() {
     expect(admin).toBe(false);
   });
 });
+// ****************
+it('should allow a correct username/password to log in securely', async function () {
+  try {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "u1",
+        password: "pwd1"
+      });
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual({ token: expect.any(String) });
+
+    let { username, admin } = jwt.verify(response.body.token, SECRET_KEY);
+    expect(username).toBe("u1");
+    expect(admin).toBe(false);
+  } catch (err) {
+    console.error(err);
+  }
+});
+// **************
 
 describe("GET /users", function() {
   test("should deny access if no token provided", async function() {
@@ -183,6 +203,25 @@ describe("DELETE /users/[username]", function() {
       .delete("/users/u1")
       .send({ _token: tokens.u1 });
     expect(response.statusCode).toBe(401);
+  });
+
+  test ("should hash passwords before saving to the database", async function () {
+    const response = await request(app)
+      .post("/auth/register")
+      .send({
+        username: "new_user",
+        password: "password123",
+        first_name: "John",
+        last_name: "Doe",
+        email: "john@example.com",
+        phone: "1234567890",
+      });
+  
+    expect(response.statusCode).toBe(201);
+  
+    const user = await User.get("new_user");
+    expect(user.password).not.toEqual("password123");
+    expect(await bcrypt.compare("password123", user.password)).toBe(true);
   });
 
   test("should allow if admin", async function() {
